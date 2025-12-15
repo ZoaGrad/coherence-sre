@@ -10,7 +10,7 @@ def test_flapping_detection():
     correlator = EventCorrelator(history_window=10, flapping_threshold=3)
     
     # Simulate oscillating stream
-    # STABLE -> INSTABLE -> STABLE -> INSTABLE (3 transitions)
+    # STABLE -> UNSTABLE -> STABLE -> UNSTABLE (3 transitions)
     stream = [
         {"status": "STABLE", "veto": None},
         {"status": "UNSTABLE", "veto": {"type": "COMPUTE"}},

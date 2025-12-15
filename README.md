@@ -62,3 +62,32 @@ Distributed systems fail because of unbounded recursion and positive feedback lo
 ### 🛡️ License
 
 MIT License. Free for everyone.
+
+## 🔌 Live Ingestion (Optional)
+
+Coherence can ingest real telemetry from providers like Datadog. This is **strictly optional**. The tool remains read-only and air-gapped by default.
+
+### Datadog Setup
+1. Install optional dependencies:
+   ```bash
+   pip install ".[connectors]"
+   ```
+
+2. Create a .env file (do not commit this):
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Add your keys:
+   ```env
+   DATADOG_API_KEY=your_key
+   DATADOG_APP_KEY=your_key
+   DATADOG_SITE=us5.datadoghq.com
+   ```
+
+4. Run with source:
+   ```bash
+   python -m coherence.core.sentinel --source datadog
+   ```
+
+> **Note on Physics**: Datadog returns metrics as rates (e.g., packets/sec). Coherence internally integrates these rates back into cumulative counters to satisfy the Variance Sentinel's differential logic.

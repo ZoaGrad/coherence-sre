@@ -91,3 +91,22 @@ Coherence can ingest real telemetry from providers like Datadog. This is **stric
    ```
 
 > **Note on Physics**: Datadog returns metrics as rates (e.g., packets/sec). Coherence internally integrates these rates back into cumulative counters to satisfy the Variance Sentinel's differential logic.
+
+## 🐳 Deployment (Docker)
+
+Coherence is designed to run as a sidecar container in Kubernetes or ECS.
+
+### Build
+```bash
+docker build -t coherence-sre .
+```
+
+### Run (Simulation)
+```bash
+docker run -it --rm coherence-sre
+```
+
+### Run (Production / Datadog)
+```bash
+docker run -it --rm --env-file .env coherence-sre --source datadog
+```

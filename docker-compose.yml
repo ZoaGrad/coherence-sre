@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  # The Default Simulator
+  sentinel-sim:
+    build: .
+    image: coherence-sre:latest
+    container_name: coherence-sim
+    command: [ "--simulate" ]
+    tty: true # Required for Rich TUI
+  # The Live Monitor (Requires .env)
+  # Uncomment to use
+  # sentinel-live:
+  #   build: .
+  #   env_file:
+  #     - .env
+  #   command: ["--source", "datadog"]
+  #   tty: true

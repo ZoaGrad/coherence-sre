@@ -25,6 +25,12 @@ connectors = [
     "datadog",
     "python-dotenv"
 ]
+dashboard = [
+    "streamlit",
+    "plotly",
+    "pandas",
+    "watchdog"
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

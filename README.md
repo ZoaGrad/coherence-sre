@@ -2,48 +2,62 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Status](https://img.shields.io/badge/Status-Constitutional-green.svg)]()
+[![Status](https://img.shields.io/badge/Status-Enterprise%20v0.2.0-green.svg)]()
 
 **Detect system instability 4 hours before the crash.**
 
-Coherence is a lightweight, read-only Sentinel that monitors the *variance* (instability) of your infrastructure rather than just the *average* (load). It detects "Silent Failures"—retry storms, memory churn, and thread thrashing—that traditional dashboards miss until it's too late.
+Coherence is a deterministic SRE engine that monitors the *variance* (instability) of your infrastructure rather than just the *average* (load). It detects "Silent Failures"—retry storms, memory churn, and thread thrashing—that traditional dashboards miss.
 
 ### ⚡ The Problem: Averages Lie
-Most monitoring tools alert on thresholds (e.g., `CPU > 80%`).
-By the time CPU hits 80%, the cascading failure has already begun.
 
-* **The Seizure:** A system thrashing between 10% and 90% CPU averages out to 50% (Healthy). Coherence sees the **Variance** (80%) and alerts immediately.
-* **The Fever:** A system allocating 10GB/s of RAM but clearing it immediately shows flat memory usage. Coherence tracks the **Allocation Rate** and predicts the GC death spiral.
-* **The Auto-Immune:** A service retrying failed requests creates a storm. Success rates look fine (eventually 200 OK), but **Amplification Ratio** explodes.
+Most monitoring tools alert on thresholds (e.g., `CPU > 80%`). By the time CPU hits 80%, the cascading failure has already begun.
 
-### 🛠 Architecture (Constitutional V1)
+* **Seizure (Computational Entropy):** Detects when variance explodes while averages remain normal.
+* **Fever (Resource Leaks):** Tracks allocation velocity (MB/s) rather than just capacity.
+* **Auto-Immune (Retry Storms):** Identifies amplification ratios in network traffic.
 
-We enforce a strict separation of concerns to ensure **deterministic analysis**:
+### 🛠 Architecture (Enterprise V0.2.0)
 
-1.  **Sensors (`coherence.py`)**: Stateless ingestion of raw metrics.
-2.  **Detectors (`detectors.py`)**: Pure math modules converting signals to scores (Variance, MAD).
-3.  **Memory (`correlator.py`)**: Temporal logic engine identifying complex patterns (Flapping, Cascades).
+Coherence enforces a strict, modular separation of concerns:
 
-### 🚀 Quick Start (No Database Required)
+```
+src/coherence/
+├── core/           # The Sentinel (State Management)
+├── detection/      # The Physics (Variance, MAD, Robust Z-Score)
+├── correlation/    # The Memory (Temporal Logic, Incidents)
+└── ingestion/      # The Senses (Adapters, Connectors)
+```
 
-Coherence is designed to be "drop-in" safe. It is read-only and requires no infrastructure changes.
+### 🚀 Quick Start (Flight Simulator)
+
+We include a deterministic "Flight Simulator" that generates a synthetic cascading failure (Compute Seizure → Memory Fever) to demonstrate the engine's capability without touching your production.
 
 ```bash
 # 1. Install Dependencies
-pip install -r requirements.txt
+pip install -e .
 
-# 2. Run in "Sentinel Mode" (Live Dashboard)
-python coherence.py --live
-
-# 3. Flight Simulator: Test the "Cascading Failure" Scenerio
-# (Watch for the CRITICAL CASCADE ALERT around Step 30)
-python coherence.py --simulate
+# 2. Run the Flight Simulator
+# (Requires pandas/numpy for simulation)
+pip install pandas numpy 
+python examples/flight_simulator.py
 ```
 
-### 🧠 The Philosophy
+**Output:**
+```text
+[Running Advanced Detection...]
+Detected 319 anomalies.
 
-Distributed systems fail because of unbounded recursion and positive feedback loops. Coherence enforces the System 5 Veto:
-It does not try to "fix" the bug. It recommends a Non-Algorithmic Veto (Load Shedding, Circuit Breaking) to preserve the system's core integrity.
+[Running Correlation Engine...]
+--- INCIDENT #1 ---
+Host: host-001
+Risk Score: 0.50
+Duration: 19:20:29 - 19:25:47
+Narrative: Detected instability on host-001. Pattern: COMPUTE SEIZURE (High Variance).
+```
+
+### 🧠 The Philosophy: System 5 Veto
+
+Distributed systems fail because of unbounded recursion and positive feedback loops. Coherence enforces the **System 5 Veto**: It does not "fix" the bug. It recommends a Non-Algorithmic Veto (Load Shedding, Circuit Breaking) to preserve the system's core integrity.
 
 ### 🛡️ License
 

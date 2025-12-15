@@ -4,10 +4,12 @@ Coherence SRE: The Variance Sentinel.
 import time
 import math
 import argparse
+import random
+import psutil
 import sys
 from collections import deque
-from dataclasses import asdict
-from typing import Dict, Optional, Any
+from dataclasses import dataclass, asdict
+from typing import Dict, Optional, List, Any, Union
 
 # Third-party imports
 from rich.console import Console
@@ -19,12 +21,30 @@ from rich.text import Text
 from rich import box
 
 # --- Core Imports ---
-from ..core.model import CONFIG, SystemMetrics
+# We keep the basic scanners for fallback/bootstrap
 from ..detection.detectors import VarianceScanner
-from ..correlation.correlator import EventCorrelator
+from ..correlation.correlator import EventCorrelator, Incident, IncidentType
 
-# --- Adapter Imports ---
-from ..ingestion.adapters import MetricAdapter, LiveAdapter, SimAdapter
+# --- Configuration & Constants ---
+
+@dataclass(frozen=True)
+class ThresholdConfig:
+    cpu_variance_limit: float = 10.0
+    alloc_rate_limit_mb_s: float = 100.0
+    amplification_ratio_limit: float = 1.1
+    window_size_seconds: int = 60
+    poll_interval: float = 1.0
+    max_signal_lag_seconds: float = 300.0
+
+CONFIG = ThresholdConfig()
+
+@dataclass
+class SystemMetrics:
+    timestamp: float
+    cpu_percent: float
+    memory_used_mb: float
+    net_sent_packets: int
+    net_recv_packets: int
 
 class CoherenceSentinel:
     def __init__(self) -> None:
@@ -36,12 +56,13 @@ class CoherenceSentinel:
         self.basic_correlator = EventCorrelator()
         
         # Level 2: Synaptic Brain (Advanced Physics)
-        self.advanced_detector: Any = None
-        self.advanced_correlator: Any = None
+        self.advanced_detector = None
+        self.advanced_correlator = None
         self.has_brain = False
         
         # Robust Initialization
         try:
+            import pandas as pd
             from ..detection.advanced import AdvancedDetector
             from ..correlation.engine import CorrelationEngine as AdvancedCorrelator
             
@@ -157,6 +178,8 @@ class CoherenceSentinel:
                         if incidents:
                             narrative_incident = incidents[-1] # Take the latest
                 except Exception as e:
+                    # Advanced Logic Failure: Do NOT crash the Sentinel
+                    # Just degrade to Basic
                     pass
 
             return {
@@ -169,6 +192,29 @@ class CoherenceSentinel:
 
         except Exception as e:
             return {"status": "ERROR", "metrics": {}, "veto": None, "error": str(e)}
+
+# --- Adapters (Standard) ---
+class MetricAdapter:
+    def get_metrics(self) -> SystemMetrics: raise NotImplementedError
+
+class LiveAdapter(MetricAdapter):
+    def get_metrics(self) -> SystemMetrics:
+        try:
+            m, n, c = psutil.virtual_memory(), psutil.net_io_counters(), psutil.cpu_percent(interval=None)
+            return SystemMetrics(time.time(), float(c), m.used/1048576, n.packets_sent, n.packets_recv)
+        except: raise RuntimeError("Sensor Fail")
+
+class SimAdapter(MetricAdapter):
+    def __init__(self): self.step, self.mem, self.ns, self.nr = 0, 4000.0, 1000, 1000
+    def get_metrics(self) -> SystemMetrics:
+        self.step += 1; t = time.time()
+        # Lag
+        if 60 < self.step < 70: t -= 400
+        # Seizure
+        c = random.choice([10.0, 95.0]) if 20 < self.step < 35 else random.uniform(40,50)
+        # Fever
+        self.mem += 500.0 if 25 < self.step < 40 else 5.0
+        return SystemMetrics(t, c, self.mem, self.ns + self.step*10, self.nr + self.step*10)
 
 # --- UI Loop ---
 def make_dashboard(sentinel_data: Dict[str, Any]) -> Layout:
@@ -185,7 +231,7 @@ def make_dashboard(sentinel_data: Dict[str, Any]) -> Layout:
     color_map = {"STABLE": "green", "INSTABLE": "red", "WARMUP": "yellow", "ERROR": "magenta", "STALE": "grey50"}
     
     # Priority: Error > Narrative > Veto > Status
-    if narrative and hasattr(narrative, 'risk_score') and narrative.risk_score > 0.5:
+    if narrative and narrative.risk_score > 0.5:
         # Advanced Incident detected
         status_disp = "CRITICAL"
         header_col = "red"
@@ -235,8 +281,7 @@ if __name__ == "__main__":
     parser.add_argument("--source", choices=["sim", "live", "datadog"], default="sim")
     args = parser.parse_args()
 
-    adapter: Optional[MetricAdapter] = None
-    
+    adapter = None
     if args.source == "live": adapter = LiveAdapter()
     elif args.source == "sim": adapter = SimAdapter()
     elif args.source == "datadog":
@@ -244,9 +289,6 @@ if __name__ == "__main__":
             from ..ingestion.adapters import DatadogAdapter
             adapter = DatadogAdapter()
         except: sys.exit("[ERROR] Datadog adapter missing.")
-
-    if not adapter:
-        sys.exit("[ERROR] No Source Selected")
 
     sentinel = CoherenceSentinel()
     console = Console()

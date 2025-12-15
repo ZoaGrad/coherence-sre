@@ -1,64 +1,129 @@
 Metadata-Version: 2.4
 Name: coherence-sre
-Version: 0.1.0
-Summary: The Variance Sentinel: Deterministic SRE Analysis Engine
-Author-email: Blackglass Continuum <sre@blackglass.com>
+Version: 0.3.0
+Summary: A read-only SRE sentinel that detects system instability via variance, allocation rate, and amplification signals.
 Requires-Python: >=3.9
 Description-Content-Type: text/markdown
 License-File: LICENSE
 Requires-Dist: psutil
 Requires-Dist: rich
-Requires-Dist: pandas
-Requires-Dist: datadog
-Requires-Dist: numpy
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: black; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+Requires-Dist: mypy; extra == "dev"
+Provides-Extra: connectors
+Requires-Dist: pandas; extra == "connectors"
+Requires-Dist: datadog; extra == "connectors"
+Requires-Dist: python-dotenv; extra == "connectors"
+Provides-Extra: dashboard
+Requires-Dist: streamlit; extra == "dashboard"
+Requires-Dist: plotly; extra == "dashboard"
+Requires-Dist: pandas; extra == "dashboard"
+Requires-Dist: watchdog; extra == "dashboard"
 Dynamic: license-file
 
 # Coherence SRE: The Variance Sentinel
 
+[![Coherence CI](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml/badge.svg)](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Status](https://img.shields.io/badge/Status-Constitutional-green.svg)]()
+[![Python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![Status](https://img.shields.io/badge/Status-Industrial%20v0.5.0-green.svg)]()
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)]()
 
 **Detect system instability 4 hours before the crash.**
 
-Coherence is a lightweight, read-only Sentinel that monitors the *variance* (instability) of your infrastructure rather than just the *average* (load). It detects "Silent Failures"—retry storms, memory churn, and thread thrashing—that traditional dashboards miss until it's too late.
+Coherence is a deterministic SRE engine that monitors the *variance* (instability) of your infrastructure rather than just the *average* (load). It detects "Silent Failures"—retry storms, memory churn, and thread thrashing—that traditional dashboards miss.
 
 ### ⚡ The Problem: Averages Lie
-Most monitoring tools alert on thresholds (e.g., `CPU > 80%`).
-By the time CPU hits 80%, the cascading failure has already begun.
 
-* **The Seizure:** A system thrashing between 10% and 90% CPU averages out to 50% (Healthy). Coherence sees the **Variance** (80%) and alerts immediately.
-* **The Fever:** A system allocating 10GB/s of RAM but clearing it immediately shows flat memory usage. Coherence tracks the **Allocation Rate** and predicts the GC death spiral.
-* **The Auto-Immune:** A service retrying failed requests creates a storm. Success rates look fine (eventually 200 OK), but **Amplification Ratio** explodes.
+Most monitoring tools alert on thresholds (e.g., `CPU > 80%`). By the time CPU hits 80%, the cascading failure has already begun.
 
-### 🛠 Architecture (Constitutional V1)
+* **Seizure (Computational Entropy):** Detects when variance explodes while averages remain normal.
+* **Fever (Resource Leaks):** Tracks allocation velocity (MB/s) rather than just capacity.
+* **Auto-Immune (Retry Storms):** Identifies amplification ratios in network traffic.
 
-We enforce a strict separation of concerns to ensure **deterministic analysis**:
+---
 
-1.  **Sensors (`coherence.py`)**: Stateless ingestion of raw metrics.
-2.  **Detectors (`detectors.py`)**: Pure math modules converting signals to scores (Variance, MAD).
-3.  **Memory (`correlator.py`)**: Temporal logic engine identifying complex patterns (Flapping, Cascades).
+### 🛠 Architecture (Phase 3.3)
 
-### 🚀 Quick Start (No Database Required)
+Coherence uses a **Hybrid Architecture** that degrades gracefully from Advanced Machine Learning to Basic Physics.
 
-Coherence is designed to be "drop-in" safe. It is read-only and requires no infrastructure changes.
-
-```bash
-# 1. Install Dependencies
-pip install -r requirements.txt
-
-# 2. Run in "Sentinel Mode" (Live Dashboard)
-python coherence.py --live
-
-# 3. Flight Simulator: Test the "Cascading Failure" Scenerio
-# (Watch for the CRITICAL CASCADE ALERT around Step 30)
-python coherence.py --simulate
+```mermaid
+graph TD
+    A[Telemetry Source] -->|Metrics| B(The Bridge);
+    B -->|Normalized| C{The Sentinel};
+    
+    subgraph "The Brain (Optional)"
+    D[Advanced Detector] -->|Anomalies| E[Correlation Engine];
+    E -->|Narrative| F[Incident Report];
+    end
+    
+    C -->|Window| D;
+    C -->|Variance Physics| G[Basic Veto];
+    F -.->|Enhances| G;
+    G -->|Output| H[Dashboard / CLI];
+    
+    style C fill:#f9f,stroke:#333,stroke-width:4px
+    style D fill:#ccf,stroke:#333
+    style E fill:#ccf,stroke:#333
 ```
 
-### 🧠 The Philosophy
+- **Core (Physics):** Always on. Uses mathematical variance to detect chaos.
+- **Brain (Synaptic Upgrade):** Activates if `pandas` is present. Uses Z-Score and Inter-Quartile Range to construct "Narratives."
+- **Interface:** CLI for Engineers, Streamlit "Glass Cockpit" for Executives.
 
-Distributed systems fail because of unbounded recursion and positive feedback loops. Coherence enforces the System 5 Veto:
-It does not try to "fix" the bug. It recommends a Non-Algorithmic Veto (Load Shedding, Circuit Breaking) to preserve the system's core integrity.
+---
+
+### 🚀 Usage
+
+#### 1. The Terminal (Engineer View)
+Runs the lightweight TUI. Safe for production sidecars.
+
+```bash
+pip install .
+python -m coherence.core.sentinel --source sim
+```
+
+#### 2. The Glass Cockpit (War Room View)
+Launches the "Overwatch" dashboard. Visualizes variance in real-time.
+
+```bash
+pip install ".[dashboard]"
+streamlit run src/coherence/ui/webapp.py
+```
+*Features: Red-Zone Seizure Overlay, Real-time Trace, Narrative Display.*
+
+#### 3. Live Ingestion (Datadog)
+Connects to real telemetry (Read-Only).
+
+```bash
+pip install ".[connectors]"
+# Configure .env with DATADOG_API_KEY
+python -m coherence.core.sentinel --source datadog
+```
+
+---
+
+### 🐳 Deployment (Docker)
+
+Coherence is designed to run as a sidecar container in Kubernetes or ECS.
+
+```bash
+# Build
+docker build -t coherence-sre .
+
+# Run (Simulation)
+docker run -it --rm coherence-sre
+
+# Run (Production / Datadog)
+docker run -it --rm --env-file .env coherence-sre --source datadog
+```
+
+### 🧠 The Philosophy: System 5 Veto
+
+Distributed systems fail because of unbounded recursion and positive feedback loops. Coherence enforces the **System 5 Veto**: It does not "fix" the bug. It recommends a Non-Algorithmic Veto (Load Shedding, Circuit Breaking) to preserve the system's core integrity.
 
 ### 🛡️ License
 

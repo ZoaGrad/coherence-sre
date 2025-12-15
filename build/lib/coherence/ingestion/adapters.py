@@ -1,43 +1,25 @@
 import time
 import os
-import random
-import psutil
 from typing import Any
-from ..core.model import SystemMetrics
+
+# Lazy SystemMetrics def
+try:
+    from ..core.sentinel import SystemMetrics
+except ImportError:
+    from dataclasses import dataclass
+    @dataclass
+    class SystemMetrics:
+        timestamp: float
+        cpu_percent: float
+        memory_used_mb: float
+        net_sent_packets: int
+        net_recv_packets: int
 
 class AdapterError(Exception):
     pass
 
-class MetricAdapter:
-    def get_metrics(self) -> SystemMetrics: raise NotImplementedError
-
-class LiveAdapter(MetricAdapter):
-    def get_metrics(self) -> SystemMetrics:
-        try:
-            m, n, c = psutil.virtual_memory(), psutil.net_io_counters(), psutil.cpu_percent(interval=None)
-            # Use real timestamp
-            return SystemMetrics(time.time(), float(c), m.used/1048576, n.packets_sent, n.packets_recv)
-        except Exception: raise RuntimeError("Sensor Fail")
-
-class SimAdapter(MetricAdapter):
-    def __init__(self) -> None: 
-        self.step = 0
-        self.mem = 4000.0
-        self.ns = 1000
-        self.nr = 1000
-        
-    def get_metrics(self) -> SystemMetrics:
-        self.step += 1; t = time.time()
-        # Lag
-        if 60 < self.step < 70: t -= 400
-        # Seizure
-        c = random.choice([10.0, 95.0]) if 20 < self.step < 35 else random.uniform(40,50)
-        # Fever
-        self.mem += 500.0 if 25 < self.step < 40 else 5.0
-        return SystemMetrics(t, c, self.mem, self.ns + self.step*10, self.nr + self.step*10)
-
-class DatadogAdapter(MetricAdapter):
-    def __init__(self) -> None:
+class DatadogAdapter:
+    def __init__(self):
         try:
             import pandas as pd
             from datadog import initialize, api
@@ -57,9 +39,9 @@ class DatadogAdapter(MetricAdapter):
         self.host_filter = os.getenv("DATADOG_HOST_FILTER", "*") 
 
         # Accumulators
-        self._net_sent_acc: float = 0.0
-        self._net_recv_acc: float = 0.0
-        self._last_fetch: float = 0.0
+        self._net_sent_acc = 0.0
+        self._net_recv_acc = 0.0
+        self._last_fetch = 0.0
 
     def get_metrics(self) -> SystemMetrics:
         now = int(time.time())
@@ -75,10 +57,10 @@ class DatadogAdapter(MetricAdapter):
         }
         
         results = {}
-        metric_ts: float = float(now) # Default to now if fail
+        metric_ts = now # Default to now if fail
         
         try:
-            from datadog import api # type: ignore
+            from datadog import api
             for key, q in queries.items():
                 resp = api.Metric.query(start=start, end=query_end, query=q)
                 
@@ -92,21 +74,22 @@ class DatadogAdapter(MetricAdapter):
                     continue
                     
                 # Take last valid point
+                # Datadog returns [ms_timestamp, value] usually? 
+                # Actually Datadog Python API returns [sec_timestamp, value]
+                # We trust the timestamp from the API to detect lag.
                 last_point = pointlist[-1]
-                # Cast timestamp to float
-                raw_ts = float(last_point[0])
-                metric_ts = raw_ts / 1000.0 if raw_ts > 10000000000 else raw_ts
-                results[key] = float(last_point[1] or 0.0)
+                metric_ts = last_point[0] / 1000 if last_point[0] > 10000000000 else last_point[0]
+                results[key] = last_point[1] or 0.0
 
             # Translation
-            cpu = 100.0 - results.get("cpu", 0.0)
-            mem = results.get("mem", 0.0) / 1024 / 1024
+            cpu = 100.0 - results["cpu"]
+            mem = results["mem"] / 1024 / 1024
             
             # Net Accumulation
-            self._accumulate(results.get("net_out", 0.0), results.get("net_in", 0.0), metric_ts)
+            self._accumulate(results["net_out"], results["net_in"], metric_ts)
             
             return SystemMetrics(
-                timestamp=metric_ts, 
+                timestamp=metric_ts, # Use actual data time
                 cpu_percent=cpu,
                 memory_used_mb=mem,
                 net_sent_packets=int(self._net_sent_acc),
@@ -116,7 +99,7 @@ class DatadogAdapter(MetricAdapter):
         except Exception as e:
             raise AdapterError(f"Datadog Fetch Error: {e}")
 
-    def _accumulate(self, sent_rate: float, recv_rate: float, current_time: float) -> None:
+    def _accumulate(self, sent_rate, recv_rate, current_time):
         if self._last_fetch == 0:
             delta = 1.0
         else:

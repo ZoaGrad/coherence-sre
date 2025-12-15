@@ -26,7 +26,7 @@ class CorrelationEngine:
         """
         Groups anomalies by Host and Time Window.
         """
-        incidents: List[Incident] = []
+        incidents = []
         if anomalies.empty:
             return incidents
 

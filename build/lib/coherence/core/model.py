@@ -13,7 +13,6 @@ class ThresholdConfig:
     amplification_ratio_limit: float = 1.1
     window_size_seconds: int = 60
     poll_interval: float = 1.0
-    max_signal_lag_seconds: float = 300.0
 
 # Global Configuration Instance
 CONFIG = ThresholdConfig()

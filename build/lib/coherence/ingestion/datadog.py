@@ -6,7 +6,7 @@ import os
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 import pandas as pd
-from datadog import initialize, api
+from datadog import initialize, api # type: ignore
 
 from coherence.ingestion.base import (
     MonitoringConnector, 
@@ -97,7 +97,7 @@ class DatadogConnector(MonitoringConnector):
         start_ts = int(start.timestamp())
         end_ts = int(end.timestamp())
         
-        params: Dict[str, Any] = {
+        params = {
             "start": start_ts,
             "end": end_ts,
         }

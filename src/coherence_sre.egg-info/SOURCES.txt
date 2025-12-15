@@ -15,11 +15,12 @@ src/coherence/ingestion/adapters.py
 src/coherence/ingestion/base.py
 src/coherence/ingestion/datadog.py
 src/coherence/ui/dashboard.py
+src/coherence/ui/webapp.py
 src/coherence_sre.egg-info/PKG-INFO
 src/coherence_sre.egg-info/SOURCES.txt
 src/coherence_sre.egg-info/dependency_links.txt
-src/coherence_sre.egg-info/entry_points.txt
 src/coherence_sre.egg-info/requires.txt
 src/coherence_sre.egg-info/top_level.txt
 tests/test_correlation.py
 tests/test_detectors.py
+tests/test_signal_hygiene.py

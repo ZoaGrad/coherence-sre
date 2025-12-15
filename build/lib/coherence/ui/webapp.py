@@ -6,7 +6,6 @@ import math
 from collections import deque
 import plotly.graph_objects as go
 from datetime import datetime
-from typing import Literal, cast
 
 # Import Physics and Config
 from coherence.detection.detectors import VarianceScanner
@@ -95,8 +94,8 @@ c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.metric("CPU Load (Mean)", f"{cpu:.1f}%")
 with c2:
-    color_val = "normal" if not is_seizure else "inverse"
-    st.metric("CPU Variance (Ache)", f"{current_std_dev:.2f}", delta_color=cast(Literal["normal", "inverse", "off"], color_val))
+    color = "normal" if not is_seizure else "inverse"
+    st.metric("CPU Variance (Ache)", f"{current_std_dev:.2f}", delta_color=color)
 with c3:
     st.metric("Memory Usage", f"{mem:.1f}%")
 with c4:

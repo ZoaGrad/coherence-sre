@@ -21,7 +21,7 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install ".[dev,connectors]"
+        pip install ".[dev,connectors,dashboard]"
         
     - name: Static Analysis (Ruff)
       # We run ruff but don't fail the build yet if it's strictly stylistic

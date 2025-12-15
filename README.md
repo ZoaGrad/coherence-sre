@@ -2,10 +2,10 @@
 
 [![Coherence CI](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml/badge.svg)](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml)
 
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![Status](https://img.shields.io/badge/Status-Enterprise%20v0.2.0-green.svg)]()
+[![Python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
+[![Status](https://img.shields.io/badge/Status-Industrial%20v0.5.0-green.svg)]()
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)]()
 
 **Detect system instability 4 hours before the crash.**
 
@@ -19,43 +19,81 @@ Most monitoring tools alert on thresholds (e.g., `CPU > 80%`). By the time CPU h
 * **Fever (Resource Leaks):** Tracks allocation velocity (MB/s) rather than just capacity.
 * **Auto-Immune (Retry Storms):** Identifies amplification ratios in network traffic.
 
-### 🛠 Architecture (Enterprise V0.2.0)
+---
 
-Coherence enforces a strict, modular separation of concerns:
+### 🛠 Architecture (Phase 3.3)
 
+Coherence uses a **Hybrid Architecture** that degrades gracefully from Advanced Machine Learning to Basic Physics.
+
+```mermaid
+graph TD
+    A[Telemetry Source] -->|Metrics| B(The Bridge);
+    B -->|Normalized| C{The Sentinel};
+    
+    subgraph "The Brain (Optional)"
+    D[Advanced Detector] -->|Anomalies| E[Correlation Engine];
+    E -->|Narrative| F[Incident Report];
+    end
+    
+    C -->|Window| D;
+    C -->|Variance Physics| G[Basic Veto];
+    F -.->|Enhances| G;
+    G -->|Output| H[Dashboard / CLI];
+    
+    style C fill:#f9f,stroke:#333,stroke-width:4px
+    style D fill:#ccf,stroke:#333
+    style E fill:#ccf,stroke:#333
 ```
-src/coherence/
-├── core/           # The Sentinel (State Management)
-├── detection/      # The Physics (Variance, MAD, Robust Z-Score)
-├── correlation/    # The Memory (Temporal Logic, Incidents)
-└── ingestion/      # The Senses (Adapters, Connectors)
-```
 
-### 🚀 Quick Start (Flight Simulator)
+- **Core (Physics):** Always on. Uses mathematical variance to detect chaos.
+- **Brain (Synaptic Upgrade):** Activates if `pandas` is present. Uses Z-Score and Inter-Quartile Range to construct "Narratives."
+- **Interface:** CLI for Engineers, Streamlit "Glass Cockpit" for Executives.
 
-We include a deterministic "Flight Simulator" that generates a synthetic cascading failure (Compute Seizure → Memory Fever) to demonstrate the engine's capability without touching your production.
+---
+
+### 🚀 Usage
+
+#### 1. The Terminal (Engineer View)
+Runs the lightweight TUI. Safe for production sidecars.
 
 ```bash
-# 1. Install Dependencies
-pip install -e .
-
-# 2. Run the Flight Simulator
-# (Requires pandas/numpy for simulation)
-pip install pandas numpy 
-python examples/flight_simulator.py
+pip install .
+python -m coherence.core.sentinel --source sim
 ```
 
-**Output:**
-```text
-[Running Advanced Detection...]
-Detected 319 anomalies.
+#### 2. The Glass Cockpit (War Room View)
+Launches the "Overwatch" dashboard. Visualizes variance in real-time.
 
-[Running Correlation Engine...]
---- INCIDENT #1 ---
-Host: host-001
-Risk Score: 0.50
-Duration: 19:20:29 - 19:25:47
-Narrative: Detected instability on host-001. Pattern: COMPUTE SEIZURE (High Variance).
+```bash
+pip install ".[dashboard]"
+streamlit run src/coherence/ui/webapp.py
+```
+*Features: Red-Zone Seizure Overlay, Real-time Trace, Narrative Display.*
+
+#### 3. Live Ingestion (Datadog)
+Connects to real telemetry (Read-Only).
+
+```bash
+pip install ".[connectors]"
+# Configure .env with DATADOG_API_KEY
+python -m coherence.core.sentinel --source datadog
+```
+
+---
+
+### 🐳 Deployment (Docker)
+
+Coherence is designed to run as a sidecar container in Kubernetes or ECS.
+
+```bash
+# Build
+docker build -t coherence-sre .
+
+# Run (Simulation)
+docker run -it --rm coherence-sre
+
+# Run (Production / Datadog)
+docker run -it --rm --env-file .env coherence-sre --source datadog
 ```
 
 ### 🧠 The Philosophy: System 5 Veto
@@ -65,51 +103,3 @@ Distributed systems fail because of unbounded recursion and positive feedback lo
 ### 🛡️ License
 
 MIT License. Free for everyone.
-
-## 🔌 Live Ingestion (Optional)
-
-Coherence can ingest real telemetry from providers like Datadog. This is **strictly optional**. The tool remains read-only and air-gapped by default.
-
-### Datadog Setup
-1. Install optional dependencies:
-   ```bash
-   pip install ".[connectors]"
-   ```
-
-2. Create a .env file (do not commit this):
-   ```bash
-   cp .env.example .env
-   ```
-
-3. Add your keys:
-   ```env
-   DATADOG_API_KEY=your_key
-   DATADOG_APP_KEY=your_key
-   DATADOG_SITE=us5.datadoghq.com
-   ```
-
-4. Run with source:
-   ```bash
-   python -m coherence.core.sentinel --source datadog
-   ```
-
-> **Note on Physics**: Datadog returns metrics as rates (e.g., packets/sec). Coherence internally integrates these rates back into cumulative counters to satisfy the Variance Sentinel's differential logic.
-
-## 🐳 Deployment (Docker)
-
-Coherence is designed to run as a sidecar container in Kubernetes or ECS.
-
-### Build
-```bash
-docker build -t coherence-sre .
-```
-
-### Run (Simulation)
-```bash
-docker run -it --rm coherence-sre
-```
-
-### Run (Production / Datadog)
-```bash
-docker run -it --rm --env-file .env coherence-sre --source datadog
-```

@@ -3,7 +3,7 @@ Integration Tests for Event Correlation.
 """
 
 import pytest
-from correlator import EventCorrelator, IncidentType
+from coherence.correlation.correlator import EventCorrelator, IncidentType
 
 def test_flapping_detection():
     """Ensure rapid status changes trigger FLAPPING incident."""

@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coherence-sre"
+version = "0.1.0"
+description = "The Variance Sentinel: Deterministic SRE Analysis Engine"
+readme = "README.md"
+authors = [{ name = "Blackglass Continuum", email = "sre@blackglass.com" }]
+requires-python = ">=3.9"
+dependencies = [
+    "psutil",
+    "rich",
+]
+
+# [project.scripts]
+# coherence = "coherence.cli:main"

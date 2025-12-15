@@ -1,0 +1,65 @@
+Metadata-Version: 2.4
+Name: coherence-sre
+Version: 0.1.0
+Summary: The Variance Sentinel: Deterministic SRE Analysis Engine
+Author-email: Blackglass Continuum <sre@blackglass.com>
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: psutil
+Requires-Dist: rich
+Requires-Dist: pandas
+Requires-Dist: datadog
+Requires-Dist: numpy
+Dynamic: license-file
+
+# Coherence SRE: The Variance Sentinel
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Status](https://img.shields.io/badge/Status-Constitutional-green.svg)]()
+
+**Detect system instability 4 hours before the crash.**
+
+Coherence is a lightweight, read-only Sentinel that monitors the *variance* (instability) of your infrastructure rather than just the *average* (load). It detects "Silent Failures"—retry storms, memory churn, and thread thrashing—that traditional dashboards miss until it's too late.
+
+### ⚡ The Problem: Averages Lie
+Most monitoring tools alert on thresholds (e.g., `CPU > 80%`).
+By the time CPU hits 80%, the cascading failure has already begun.
+
+* **The Seizure:** A system thrashing between 10% and 90% CPU averages out to 50% (Healthy). Coherence sees the **Variance** (80%) and alerts immediately.
+* **The Fever:** A system allocating 10GB/s of RAM but clearing it immediately shows flat memory usage. Coherence tracks the **Allocation Rate** and predicts the GC death spiral.
+* **The Auto-Immune:** A service retrying failed requests creates a storm. Success rates look fine (eventually 200 OK), but **Amplification Ratio** explodes.
+
+### 🛠 Architecture (Constitutional V1)
+
+We enforce a strict separation of concerns to ensure **deterministic analysis**:
+
+1.  **Sensors (`coherence.py`)**: Stateless ingestion of raw metrics.
+2.  **Detectors (`detectors.py`)**: Pure math modules converting signals to scores (Variance, MAD).
+3.  **Memory (`correlator.py`)**: Temporal logic engine identifying complex patterns (Flapping, Cascades).
+
+### 🚀 Quick Start (No Database Required)
+
+Coherence is designed to be "drop-in" safe. It is read-only and requires no infrastructure changes.
+
+```bash
+# 1. Install Dependencies
+pip install -r requirements.txt
+
+# 2. Run in "Sentinel Mode" (Live Dashboard)
+python coherence.py --live
+
+# 3. Flight Simulator: Test the "Cascading Failure" Scenerio
+# (Watch for the CRITICAL CASCADE ALERT around Step 30)
+python coherence.py --simulate
+```
+
+### 🧠 The Philosophy
+
+Distributed systems fail because of unbounded recursion and positive feedback loops. Coherence enforces the System 5 Veto:
+It does not try to "fix" the bug. It recommends a Non-Algorithmic Veto (Load Shedding, Circuit Breaking) to preserve the system's core integrity.
+
+### 🛡️ License
+
+MIT License. Free for everyone.

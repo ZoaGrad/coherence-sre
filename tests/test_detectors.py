@@ -4,7 +4,7 @@ Unit Tests for Coherence Detection Logic.
 
 import pytest
 import statistics
-from detectors import VarianceScanner, SpikeDetector
+from coherence.detection.detectors import VarianceScanner, SpikeDetector
 
 # --- VarianceScanner Tests ---
 

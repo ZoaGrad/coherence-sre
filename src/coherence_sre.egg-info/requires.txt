@@ -1,0 +1,5 @@
+psutil
+rich
+pandas
+datadog
+numpy

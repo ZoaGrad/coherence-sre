@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Status](https://img.shields.io/badge/Status-Constitutional-green.svg)]()
 
 **Detect system instability 4 hours before the crash.**
 
@@ -15,31 +16,27 @@ By the time CPU hits 80%, the cascading failure has already begun.
 * **The Fever:** A system allocating 10GB/s of RAM but clearing it immediately shows flat memory usage. Coherence tracks the **Allocation Rate** and predicts the GC death spiral.
 * **The Auto-Immune:** A service retrying failed requests creates a storm. Success rates look fine (eventually 200 OK), but **Amplification Ratio** explodes.
 
-### 🛠 What It Does
-Coherence runs as a standalone CLI or sidecar. It ingests standard metrics (from `psutil`, `/proc`, or API hooks) and applies three laws of reliability:
+### 🛠 Architecture (Constitutional V1)
 
-1.  **Compute Seizure Detection:**
-    *   *Metric:* CPU Standard Deviation / Window.
-    *   *Signal:* High variance with low load = Lock Contention / Thrashing.
-2.  **Resource Fever Detection:**
-    *   *Metric:* Memory Allocation Rate ($d(RAM)/dt$).
-    *   *Signal:* High churn with flat RSS = Garbage Collection Risk.
-3.  **Intent Amplification (Auto-Immune):**
-    *   *Metric:* Egress Requests / Ingress Requests.
-    *   *Signal:* Ratio > 1.1 = Retry Storm / Feedback Loop.
+We enforce a strict separation of concerns to ensure **deterministic analysis**:
+
+1.  **Sensors (`coherence.py`)**: Stateless ingestion of raw metrics.
+2.  **Detectors (`detectors.py`)**: Pure math modules converting signals to scores (Variance, MAD).
+3.  **Memory (`correlator.py`)**: Temporal logic engine identifying complex patterns (Flapping, Cascades).
 
 ### 🚀 Quick Start (No Database Required)
 
 Coherence is designed to be "drop-in" safe. It is read-only and requires no infrastructure changes.
 
 ```bash
-# 1. Install
+# 1. Install Dependencies
 pip install -r requirements.txt
 
 # 2. Run in "Sentinel Mode" (Live Dashboard)
 python coherence.py --live
 
-# 3. Run in "Simulation Mode" (Demo)
+# 3. Flight Simulator: Test the "Cascading Failure" Scenerio
+# (Watch for the CRITICAL CASCADE ALERT around Step 30)
 python coherence.py --simulate
 ```
 

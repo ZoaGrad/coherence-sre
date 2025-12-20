@@ -45,4 +45,4 @@ USER sentinel
 # Default Command: Simulation Mode
 # Users can override with "--source datadog"
 ENTRYPOINT ["python", "-m", "coherence.core.sentinel"]
-CMD ["--simulate"]
+CMD ["--source", "sim"]

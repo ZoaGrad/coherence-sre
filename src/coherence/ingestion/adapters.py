@@ -78,7 +78,7 @@ class DatadogAdapter(MetricAdapter):
         metric_ts: float = float(now) # Default to now if fail
         
         try:
-            from datadog import api # type: ignore
+            from datadog import api
             for key, q in queries.items():
                 resp = api.Metric.query(start=start, end=query_end, query=q)
                 

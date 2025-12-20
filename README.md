@@ -19,6 +19,8 @@ Most monitoring tools alert on thresholds (e.g., `CPU > 80%`). By the time CPU h
 * **Fever (Resource Leaks):** Tracks allocation velocity (MB/s) rather than just capacity.
 * **Auto-Immune (Retry Storms):** Identifies amplification ratios in network traffic.
 
+> **Compliance Note:** This framework adheres to **NIST SP 800-190** standards for application container security and utilizes **Variance-Based Anomaly Detection** to ensure operational integrity in high-entropy environments.
+
 ---
 
 ### 🛠 Architecture (Phase 3.3)

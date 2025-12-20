@@ -1,0 +1,11 @@
+.git
+.env
+.venv
+internal/
+assets/
+security_labs/
+__pycache__
+*.pyc
+*.egg-info
+dist/
+build/

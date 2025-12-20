@@ -4,7 +4,7 @@
 [![Coherence CI](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml/badge.svg)](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml)
 [![Provenance: Zenodo](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.18002927-blue)](https://doi.org/10.5281/zenodo.18002927)
 [![Compliance: NIST 800-190](https://img.shields.io/badge/NIST-SP%20800--190-003366)](https://csrc.nist.gov/publications/detail/sp/800-190/final)
-[![Version: Obsidian](https://img.shields.io/badge/Status-v0.5.1%20(Obsidian)-black)]()
+[![Version: Sovereign](https://img.shields.io/badge/Status-v1.0.0%20(Sovereign)-black)]()
 
 ---
 

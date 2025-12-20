@@ -6,6 +6,9 @@ WORKDIR /app
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev
 
+# Prevent interactive prompts during build
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Create venv and install dependencies
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"

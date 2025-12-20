@@ -7,12 +7,16 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends gcc python3-dev
 
 # Create venv and install dependencies
-python -m venv /opt/venv
+RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt .
 COPY pyproject.toml .
 # Install basic deps + connectors (optional, but good for the image to support them)
+COPY src/ src/
+COPY README.md .
+COPY LICENSE .
+
 RUN pip install --no-cache-dir .[connectors]
 
 # Stage 2: Runner (The Iron Shell)

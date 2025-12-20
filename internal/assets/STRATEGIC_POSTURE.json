@@ -1,0 +1,15 @@
+{
+  "role": "Senior SRE / Security Engineer",
+  "frameworks": ["NIST SP 800-53 r5", "NIST SP 800-171 r2"],
+  "controls": {
+    "AC-6": "Least Privilege - Application runs as non-root user (sentinel)",
+    "AU-12": "Audit Generation - Variance logic generates verifiable audit logs",
+    "SI-4": "Information System Monitoring - Derivative-based anomaly detection",
+    "SC-5": "Denial of Service Protection - Circuit breaking (Veto) reduces amplification attacks",
+    "SA-11": "Developer Security Testing - Static Analysis (Ruff/Mypy) in CI pipeline"
+  },
+  "objectives": {
+    "zero_trust": "Assume breach; monitor variance as primary indicator of compromise.",
+    "mission_assurance": "Operational continuity via auto-immune response (Load Shedding)."
+  }
+}

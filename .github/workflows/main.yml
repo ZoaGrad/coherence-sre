@@ -49,4 +49,4 @@ jobs:
       
     - name: Verify Run (Simulation)
       # We run the container for 5 seconds to ensure it boots, then kill it
-      run: timeout 5s docker run --rm coherence-sre:ci --simulate || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+      run: timeout 5s docker run --rm coherence-sre:ci --source sim || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi

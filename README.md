@@ -1,107 +1,94 @@
-# Coherence SRE: The Variance Sentinel
+# Coherence SRE // Variance Sentinel
+### Mission Assurance for High-Entropy Infrastructure
 
 [![Coherence CI](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml/badge.svg)](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml)
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
-[![Status](https://img.shields.io/badge/Status-Industrial%20v0.5.0-green.svg)]()
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)]()
-
-**Detect system instability 4 hours before the crash.**
-
-Coherence is a deterministic SRE engine that monitors the *variance* (instability) of your infrastructure rather than just the *average* (load). It detects "Silent Failures"—retry storms, memory churn, and thread thrashing—that traditional dashboards miss.
-
-### ⚡ The Problem: Averages Lie
-
-Most monitoring tools alert on thresholds (e.g., `CPU > 80%`). By the time CPU hits 80%, the cascading failure has already begun.
-
-* **Seizure (Computational Entropy):** Detects when variance explodes while averages remain normal.
-* **Fever (Resource Leaks):** Tracks allocation velocity (MB/s) rather than just capacity.
-* **Auto-Immune (Retry Storms):** Identifies amplification ratios in network traffic.
-
-> **Compliance Note:** This framework adheres to **NIST SP 800-190** standards for application container security and utilizes **Variance-Based Anomaly Detection** to ensure operational integrity in high-entropy environments.
+[![Provenance: Zenodo](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.18002927-blue)](https://doi.org/10.5281/zenodo.18002927)
+[![Compliance: NIST 800-190](https://img.shields.io/badge/NIST-SP%20800--190-003366)](https://csrc.nist.gov/publications/detail/sp/800-190/final)
+[![Version: Obsidian](https://img.shields.io/badge/Status-v0.5.1%20(Obsidian)-black)]()
 
 ---
 
-### 🛠 Architecture (Phase 3.3)
+### Executive Summary
 
-Coherence uses a **Hybrid Architecture** that degrades gracefully from Advanced Machine Learning to Basic Physics.
+**Coherence SRE** is a non-algorithmic anomaly detection framework designed for mission-critical, air-gapped, and high-variance environments. Unlike traditional monitoring that relies on scalar averages (which often mask "Silent Failures"), Coherence monitors the **Second Derivative of Computational Entropy** (Variance, Acceleration, Amplification).
+
+This approach provides a deterministic, 4-hour lead time on cascading outages by identifying instability precursors before they impact Service Level Agreements (SLAs).
+
+---
+
+### Core Methodology: The Three Signals
+
+1.  **System Jitter (Computational Entropy):**
+    *   *Metric:* CPU Variance ($\sigma^2$)
+    *   *Indicator:* High variance with nominal load indicates thread thrashing or deadlock contention.
+2.  **Exergy Efficiency (Resource Leaks):**
+    *   *Metric:* Memory Allocation Velocity (MB/s)
+    *   *Indicator:* Positive first derivative predicts Out-of-Memory (OOM) crash regardless of total capacity.
+3.  **Amplification Ratio (Retry Storms):**
+    *   *Metric:* Egress/Ingress Packet Ratio
+    *   *Indicator:* Ratio > 1:1 signifies internal retry storms or fan-out errors.
+
+> **Compliance Statement:** This framework adheres to **NIST SP 800-190** (Application Container Security) by operating as a read-only sidecar with zero external write privileges, enforcing a Zero-Trust architecture.
+
+---
+
+### System Architecture
+
+The architecture prioritizes "Physics over ML," ensuring deterministic behavior even under extreme load.
 
 ```mermaid
 graph TD
-    A[Telemetry Source] -->|Metrics| B(The Bridge);
-    B -->|Normalized| C{The Sentinel};
+    classDef secure fill:#0b0c10,stroke:#66fcf1,stroke-width:2px,color:#fff;
+    classDef logic fill:#1f2833,stroke:#c5c6c7,stroke-width:1px,color:#fff;
+
+    A[Telemetry Source] -->|Raw Metrics| B(Ingestion Layer);
+    B -->|Normalized| C{Variance Engine};
     
-    subgraph "The Brain (Optional)"
-    D[Advanced Detector] -->|Anomalies| E[Correlation Engine];
-    E -->|Narrative| F[Incident Report];
+    subgraph "Sovereign Core"
+        C -->|Rolling Window| D[Physics Engine];
+        D -->|StdDev Calculation| E[Threshold Logic];
     end
     
-    C -->|Window| D;
-    C -->|Variance Physics| G[Basic Veto];
-    F -.->|Enhances| G;
-    G -->|Output| H[Dashboard / CLI];
+    E -->|Signal > 2.0σ| F[VETO SIGNAL];
+    E -->|Stream| G[Glass Cockpit];
     
-    style C fill:#f9f,stroke:#333,stroke-width:4px
-    style D fill:#ccf,stroke:#333
-    style E fill:#ccf,stroke:#333
+    class A,B,G logic;
+    class C,D,E,F secure;
 ```
-
-- **Core (Physics):** Always on. Uses mathematical variance to detect chaos.
-- **Brain (Synaptic Upgrade):** Activates if `pandas` is present. Uses Z-Score and Inter-Quartile Range to construct "Narratives."
-- **Interface:** CLI for Engineers, Streamlit "Glass Cockpit" for Executives.
 
 ---
 
-### 🚀 Usage
+### Operational Deployment
 
-#### 1. The Terminal (Engineer View)
-Runs the lightweight TUI. Safe for production sidecars.
-
-```bash
-pip install .
-python -m coherence.core.sentinel --source sim
-```
-
-#### 2. The Glass Cockpit (War Room View)
-Launches the "Overwatch" dashboard. Visualizes variance in real-time.
+#### 1. The Glass Cockpit (Command Interface)
+The "Overwatch" dashboard provides real-time visualization of system variance vectors.
 
 ```bash
 pip install ".[dashboard]"
 streamlit run src/coherence/ui/webapp.py
 ```
-*Features: Red-Zone Seizure Overlay, Real-time Trace, Narrative Display.*
 
-#### 3. Live Ingestion (Datadog)
-Connects to real telemetry (Read-Only).
+#### 2. The Sentinel (Sidecar Mode)
+Runs as a lightweight, headless process for production environments.
 
 ```bash
-pip install ".[connectors]"
-# Configure .env with DATADOG_API_KEY
-python -m coherence.core.sentinel --source datadog
+# Docker Deployment
+docker run -d --name coherence-sentinel \
+  --read-only \
+  --tmpfs /tmp \
+  coherence-sre:latest --source datadog
 ```
 
 ---
 
-### 🐳 Deployment (Docker)
+### Provenance & Attribution
 
-Coherence is designed to run as a sidecar container in Kubernetes or ECS.
+This repository is anchored by a permanent DOI. All derivative works must cite the original provenance.
 
-```bash
-# Build
-docker build -t coherence-sre .
+*   **DOI:** [10.5281/zenodo.18002927](https://doi.org/10.5281/zenodo.18002927)
+*   **Author:** Blackglass Continuum Engineering Team
+*   **License:** MIT
 
-# Run (Simulation)
-docker run -it --rm coherence-sre
+---
 
-# Run (Production / Datadog)
-docker run -it --rm --env-file .env coherence-sre --source datadog
-```
-
-### 🧠 The Philosophy: System 5 Veto
-
-Distributed systems fail because of unbounded recursion and positive feedback loops. Coherence enforces the **System 5 Veto**: It does not "fix" the bug. It recommends a Non-Algorithmic Veto (Load Shedding, Circuit Breaking) to preserve the system's core integrity.
-
-### 🛡️ License
-
-MIT License. Free for everyone.
+**© 2025 Blackglass Continuum LLC. Defense Industrial Base / Tech Force.**

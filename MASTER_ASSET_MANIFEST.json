@@ -1,0 +1,38 @@
+{
+    "manifest_version": "1.0",
+    "project": "Coherence SRE",
+    "status": "Obsidian v0.5.1",
+    "compliance": "NIST SP 800-190",
+    "doi": "10.5281/zenodo.18002927",
+    "assets": {
+        "core_engine": {
+            "sentinel": "src/coherence/core/sentinel.py",
+            "detectors": "src/coherence/detection/detectors.py"
+        },
+        "interface": {
+            "glass_cockpit": "src/coherence/ui/webapp.py",
+            "style_spec": "Obsidian/Slate/Cobalt (Defense-Grade)"
+        },
+        "documentation": {
+            "readme": "README.md",
+            "dossier": "internal/assets/DIB_Dossier.md",
+            "strategic_posture": "internal/assets/STRATEGIC_POSTURE.json"
+        },
+        "research": {
+            "security_labs": [
+                "internal/research/labs/lab_01_sqli.py",
+                "internal/research/labs/lab_02_ddos.py",
+                "internal/research/labs/lab_03_supply_chain.py"
+            ]
+        },
+        "infrastructure": {
+            "docker": "Dockerfile",
+            "ci_pipeline": ".github/workflows/main.yml"
+        }
+    },
+    "verification": {
+        "mythic_leakage": "0%",
+        "structural_integrity": "Optimized",
+        "ui_fidelity": "High"
+    }
+}

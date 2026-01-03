@@ -6,29 +6,37 @@
 [![Compliance: NIST 800-190](https://img.shields.io/badge/NIST-SP%20800--190-003366)](https://csrc.nist.gov/publications/detail/sp/800-190/final)
 [![Version: Sovereign](https://img.shields.io/badge/Status-v1.0.0%20(Sovereign)-black)]()
 
+**Operator:** Blackglass Continuum LLC  
+**Federal Registration:** CAGE Code **17TJ5** · UEI **SVZVXPTM9AF4**  
+**Status:** U.S. Federally Registered Entity · Government-Eligible Contractor
+
 ---
 
 ### Executive Summary
 
-**Coherence SRE** is a non-algorithmic anomaly detection framework designed for mission-critical, air-gapped, and high-variance environments. Unlike traditional monitoring that relies on scalar averages (which often mask "Silent Failures"), Coherence monitors the **Second Derivative of Computational Entropy** (Variance, Acceleration, Amplification).
+**Coherence SRE** is a read-only site reliability analysis framework for high-variance, mission-critical environments.
 
-This approach provides a deterministic, 4-hour lead time on cascading outages by identifying instability precursors before they impact Service Level Agreements (SLAs).
+Rather than relying on static thresholds or trained models, Coherence evaluates second-order changes in system telemetry — variance, rate-of-change, and amplification — to identify early indicators of instability that precede service degradation.
+
+The framework is designed for deterministic behavior, reproducible analysis, and safe deployment in air-gapped or regulated infrastructure.
 
 ---
 
-### Core Methodology: The Three Signals
+### Core Methodology: Second-Order Stability Signals
 
-1.  **System Jitter (Computational Entropy):**
-    *   *Metric:* CPU Variance ($\sigma^2$)
-    *   *Indicator:* High variance with nominal load indicates thread thrashing or deadlock contention.
+1.  **System Jitter (CPU Variance):**
+    *   **Metric:** CPU Variance ($\sigma^2$)
+    *   **Interpretation:** Elevated variance under nominal load indicates execution instability such as contention or deadlock precursors.
 2.  **Exergy Efficiency (Resource Leaks):**
-    *   *Metric:* Memory Allocation Velocity (MB/s)
-    *   *Indicator:* Positive first derivative predicts Out-of-Memory (OOM) crash regardless of total capacity.
+    *   **Metric:** Memory Allocation Velocity (MB/s)
+    *   **Interpretation:** Positive first derivative indicates resource saturation trends independent of total capacity.
 3.  **Amplification Ratio (Retry Storms):**
-    *   *Metric:* Egress/Ingress Packet Ratio
-    *   *Indicator:* Ratio > 1:1 signifies internal retry storms or fan-out errors.
+    *   **Metric:** Egress/Ingress Packet Ratio
+    *   **Interpretation:** Ratio > 1:1 indicates internal retry amplification or fan-out anomalies.
 
-> **Compliance Statement:** This framework adheres to **NIST SP 800-190** (Application Container Security) by operating as a read-only sidecar with zero external write privileges, enforcing a Zero-Trust architecture.
+### Compliance & Security Posture
+
+This framework adheres to **NIST SP 800-190 (Application Container Security)** by operating exclusively as a read-only sidecar with no control-plane access, no external write privileges, and no automated remediation capabilities.
 
 ---
 
@@ -55,6 +63,14 @@ graph TD
     class A,B,G logic;
     class C,D,E,F secure;
 ```
+
+### Non-Goals
+
+Coherence SRE does not:
+- Perform automated remediation
+- Modify production systems
+- Train or adapt machine learning models
+- Require privileged control-plane access
 
 ---
 

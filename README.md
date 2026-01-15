@@ -1,4 +1,8 @@
 # Coherence SRE // Variance Sentinel
+
+> **STATUS:** `ACTIVE` | **COMPLIANCE:** `ISO 9001:2015 ALIGNED` | **CAGE:** `17TJ5`
+>
+> *This software is architected and maintained under the Blackglass Continuum Quality Management System. See [Governance Standards](./governance/ISO_9001_ALIGNMENT.md) for compliance details.*
 ### Mission Assurance for High-Entropy Infrastructure
 
 [![Coherence CI](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml/badge.svg)](https://github.com/ZoaGrad/coherence-sre/actions/workflows/main.yml)

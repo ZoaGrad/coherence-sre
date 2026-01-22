@@ -1,8 +1,9 @@
 {
-    "id": "bcb5e414-0991-47ab-8119-485ab3012462",
-    "timestamp": "2026-01-22T00:41:06.153744Z",
-    "target_artifact": "VARIANCE_REPORT.md",
-    "sha256_signature": "08b5fa1362b7aa77f85c5db70c69771c2c96956e0fc9d3d82f0c41ff60392df4",
-    "compliance_status": "PASSED",
-    "issuer": "COHERENCE-SRE | CAGE: 17TJ5"
+  "id": "33acd9bd-b805-4f18-89a3-f923c0c1e9b4",
+  "timestamp": "2026-01-22T01:23:47.137395+00:00",
+  "target_artifact": "VARIANCE_REPORT.md",
+  "sha256_signature": "08b5fa1362b7aa77f85c5db70c69771c2c96956e0fc9d3d82f0c41ff60392df4",
+  "compliance_status": "PASSED",
+  "issuer": "COHERENCE-SRE | CAGE: 17TJ5",
+  "standard": "1.1"
 }

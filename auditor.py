@@ -2,54 +2,50 @@ import hashlib
 import json
 import datetime
 import os
-import glob
 import uuid
 
-def generate_uuid():
-    return str(uuid.uuid4())
+# --- CONFIGURATION ---
+TARGET_ARTIFACT = "../blackglass-variance-core/VARIANCE_REPORT.md"
+CERTIFICATE_FILE = "compliance_certificate.json"
+REQUIRED_STRING = "**Status:** HYPER-COHERENT"
 
-
-REPORT_PATH = '../blackglass-variance-core/VARIANCE_REPORT.md'
-CERTIFICATE_PATH = '../coherence-sre/compliance_certificate.json'
-
-def main():
-    print(">>")
-    print(">> INITIATING COMPLIANCE CYCLE...")
-    try:
-        with open(REPORT_PATH, 'r') as f:
-            report_content = f.read()
-    except FileNotFoundError:
-        print(f"ERROR: Report file not found at {REPORT_PATH}")
-        return
-    except Exception as e:
-        print(f"ERROR: Could not read the report file: {e}")
+def generate_certificate():
+    print(f">> AUDITING ARTIFACT: {TARGET_ARTIFACT}")
+    
+    if not os.path.exists(TARGET_ARTIFACT):
+        print("!! ARTIFACT NOT FOUND.")
         return
 
-    sha256_hash = hashlib.sha256(report_content.encode('utf-8')).hexdigest()
+    # 1. READ ARTIFACT
+    with open(TARGET_ARTIFACT, "r", encoding="utf-8") as f:
+        content = f.read()
 
-    if "**Status:** HYPER-COHERENT" in report_content:
-        compliance_status = "PASSED"
+    # 2. CALCULATE SHA-256
+    sha_signature = hashlib.sha256(content.encode()).hexdigest()
+
+    # 3. VERIFY CONTENT (THE TRUTH)
+    if REQUIRED_STRING in content:
+        status = "PASSED"
+        print(f">> VERIFIED: {REQUIRED_STRING} FOUND.")
     else:
-        compliance_status = "FAILED"
+        status = "FAILED"
+        print(f"!! FAILED: {REQUIRED_STRING} NOT FOUND.")
 
+    # 4. MINT CERTIFICATE (STANDARD 1.1)
     certificate = {
-        "id": generate_uuid(),
-        "timestamp": datetime.datetime.utcnow().isoformat() + 'Z',
+        "id": str(uuid.uuid4()),
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "target_artifact": "VARIANCE_REPORT.md",
-        "sha256_signature": sha256_hash,
-        "compliance_status": compliance_status,
-        "issuer": "COHERENCE-SRE | CAGE: 17TJ5"
+        "sha256_signature": sha_signature,
+        "compliance_status": status,  # AMENDED KEY
+        "issuer": "COHERENCE-SRE | CAGE: 17TJ5",
+        "standard": "1.1"
     }
 
-    try:
-        with open(CERTIFICATE_PATH, 'w') as f:
-            json.dump(certificate, f, indent=4)
-    except Exception as e:
-        print(f"ERROR: Could not write the certificate file: {e}")
-        return
+    with open(CERTIFICATE_FILE, "w", encoding="utf-8") as f:
+        json.dump(certificate, f, indent=2)
 
-    hash_fragment = sha256_hash[:8]  # Display the first 8 characters of the hash
-    print(f">> CERTIFICATE MINTED: {hash_fragment} >> STATUS: {compliance_status}")
+    print(f">> CERTIFICATE MINTED: {CERTIFICATE_FILE} [{status}]")
 
 if __name__ == "__main__":
-    main()
+    generate_certificate()

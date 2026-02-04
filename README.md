@@ -111,4 +111,4 @@ This repository is anchored by a permanent DOI. All derivative works must cite t
 
 ---
 
-**© 2025 Blackglass Continuum LLC. Defense Industrial Base / Tech Force.**
+**© 2025 Blackglass Continuum LLC.**

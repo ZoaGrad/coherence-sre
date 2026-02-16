@@ -6,7 +6,7 @@ services:
     build: .
     image: coherence-sre:latest
     container_name: coherence-sim
-    command: [ "--simulate" ]
+    command: [ "--source", "sim" ]
     tty: true # Required for Rich TUI
   # The Live Monitor (Requires .env)
   # Uncomment to use

@@ -1,0 +1,12 @@
+{
+  "event": "CONSTITUTIONAL_PROPAGATION",
+  "description": "Identity layer seeded via ecosystem constitutional sweep. Architect reactivated 2026-03-29 after 42-day Regency breach in blackglass-variance-core.",
+  "architect_id": "17TJ5",
+  "timestamp": "2026-03-29T14:22:49.115430+00:00",
+  "artifacts_created": [
+    ".identity/drift_baseline.json",
+    ".identity/agency_log/propagation_2026-03-29.json",
+    "memory/vault/DEAD_HAND.md"
+  ],
+  "parent_event": "AUTOPOIESIS_SEQUENCE_2026-03-29"
+}

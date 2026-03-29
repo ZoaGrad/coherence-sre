@@ -1,0 +1,15 @@
+{
+  "state_hash": "7784e83ac7b3e6b6168802aca039280041ff829132f7193a96051cb00799f9af",
+  "seeded_at": "2026-03-29T14:22:49.115430+00:00",
+  "seeded_by": "17TJ5",
+  "source": "coherence-sre constitutional anchors",
+  "state_snapshot": {
+    "standard": "NIST SP 800-190 | Standard 1.1",
+    "system": "Coherence SRE",
+    "doi": "10.5281/zenodo.18002927",
+    "status": "Obsidian v0.5.1",
+    "issuer": "COHERENCE-SRE | CAGE: 17TJ5",
+    "cage_id": "17TJ5",
+    "seeded_at": "2026-03-29"
+  }
+}

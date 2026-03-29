@@ -1,0 +1,8 @@
+# Enforce LF line endings for all text files
+* text=auto eol=lf
+# Binary files — no line ending conversion
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary
+*.db  binary
